@@ -35,11 +35,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN groupadd -g ${PGID} appuser \
   && useradd -u ${PUID} -g appuser -s /bin/bash -m appuser
 
-# Crear carpetas necesarias para Laravel y asignar permisos (AÚN como root)
-RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache \
-  && chown -R appuser:appuser /var/www/html \
-  && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
 # Cambiar a appuser
 USER appuser
 
@@ -50,4 +45,20 @@ ENV PATH="${COMPOSER_HOME}/vendor/bin:${PATH}"
 # Instalar Laravel Installer como appuser
 RUN composer global require laravel/installer
 
-WORKDIR /var/www/html
+# Instalar NVM, la última versión estable de Node.js y npm
+ENV NVM_DIR="/home/appuser/.nvm"
+ENV PATH="$NVM_DIR/versions/node/$(ls $NVM_DIR/versions/node || echo 'stable')/bin:$PATH"
+
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && \
+  . "$NVM_DIR/nvm.sh" && \
+  nvm install stable && \
+  nvm use stable && \
+  nvm alias default stable && \
+  npm install -g npm && \
+  echo 'export NVM_DIR="$HOME/.nvm"' >> /home/appuser/.bashrc && \
+  echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> /home/appuser/.bashrc && \
+  echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> /home/appuser/.bashrc
+
+WORKDIR /var/www/src
+
+
