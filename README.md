@@ -18,25 +18,42 @@ cp .env.example .env
 - DB_DATABASE
 - DB_PASSWORD
 
-### 3. Build the Docker containers
+### 3. Create a new Laravel project in the src folder
+```bash
+composer create-project --prefer-dist laravel/laravel src
+```
+
+### 4. Build the Docker containers
 ```bash
 docker compose build
 ```
 
-### 4. Start the Docker containers
+### 5. Start the Docker containers
 ```bash
 docker compose up -d
 ```
 
-### 5. Open a shell inside the PHP-FPM container
+### 6. Open a shell inside the PHP-FPM container
 ```bash
 docker exec -it APP_NAME-php-fpm bash
 ```
 
-> 📝 **Note:** Replace APP_NAME with the value you defined in your .env file.
+### 7. Update the following variables in the src/.env file:
+- APP_NAME
+- SRV_PORT_HOST
+- DB_PORT_HOST
+- DB_DATABASE
+- DB_PASSWORD
+  
 
+> 📝 **Note:** You can use the same values as in your .env file. (Check the 2 step above)
 
-### 6. Create a new Larvel App
+### 8. Run migrations
 ```bash
-laravel new .
+php artisan migrate
 ```
+
+### 9. Check the app is running at http://localhost:SRV_PORT_HOST
+
+> 📝 **Note:** You should see some like following:
+![my-app on localhost](localhost-view.png)

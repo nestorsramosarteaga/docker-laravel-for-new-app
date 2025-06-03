@@ -35,11 +35,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN groupadd -g ${PGID} appuser \
   && useradd -u ${PUID} -g appuser -s /bin/bash -m appuser
 
-# Crear carpetas necesarias para Laravel y asignar permisos (AÚN como root)
-RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache \
-  && chown -R appuser:appuser /var/www/html \
-  && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
 # Cambiar a appuser
 USER appuser
 
@@ -64,5 +59,4 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | b
   echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> /home/appuser/.bashrc && \
   echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> /home/appuser/.bashrc
 
-# Directorio de trabajo
-WORKDIR /var/www/html
+WORKDIR /var/www/app
